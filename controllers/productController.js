@@ -1,4 +1,5 @@
 import connection from "../config/db.js";
+import slugify from "slugify";
 
 export async function index(req, res) {
   const { category, search, featured } = req.query;
@@ -102,5 +103,85 @@ export async function show(req, res) {
 
   res.json({
     data: products[0],
+  });
+}
+
+export async function store(req, res) {
+  const {
+    category_id,
+    partner_id,
+    name,
+    description,
+    material,
+    packaging,
+    certification,
+    eco_badge,
+    origin,
+    price,
+    stock,
+    is_featured,
+  } = req.body;
+
+  if (!name || !description || !price) {
+    return res.status(400).json({
+      message: "Name, description and price are required",
+    });
+  }
+
+  const slug = slugify(name, {
+    lower: true,
+    strict: true,
+  });
+
+  const image = req.file ? `images/products/${req.file.filename}` : null;
+
+  const sql = `
+    INSERT INTO products
+    (
+      category_id,
+      partner_id,
+      name,
+      slug,
+      description,
+      material,
+      packaging,
+      certification,
+      eco_badge,
+      origin,
+      price,
+      image,
+      stock,
+      is_featured
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const params = [
+    category_id || null,
+    partner_id || null,
+    name,
+    slug,
+    description,
+    material || null,
+    packaging || null,
+    certification || null,
+    eco_badge || null,
+    origin || null,
+    Number(price),
+    image,
+    Number(stock) || 0,
+    is_featured === "true" || is_featured === true,
+  ];
+
+  const [result] = await connection.query(sql, params);
+
+  res.status(201).json({
+    message: "Product created successfully",
+    data: {
+      id: result.insertId,
+      name,
+      slug,
+      image,
+    },
   });
 }
