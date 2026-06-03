@@ -1,5 +1,6 @@
 import connection from "../config/db.js";
 import slugify from "slugify";
+import fs from "fs/promises";
 
 async function generateUniqueSlug(name, ignoredProductId = null) {
   const baseSlug = slugify(name, {
@@ -312,5 +313,46 @@ export async function update(req, res) {
       slug,
       image,
     },
+  });
+}
+
+export async function destroy(req, res) {
+  const { id } = req.params;
+
+  const [products] = await connection.query(
+    `
+      SELECT id, image
+      FROM products
+      WHERE id = ?
+    `,
+    [id],
+  );
+
+  if (products.length === 0) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
+  }
+
+  const product = products[0];
+
+  await connection.query(
+    `
+      DELETE FROM products
+      WHERE id = ?
+    `,
+    [id],
+  );
+
+  if (product.image) {
+    try {
+      await fs.unlink(`public/${product.image}`);
+    } catch (err) {
+      console.warn("Product image not found or already deleted");
+    }
+  }
+
+  res.json({
+    message: "Product deleted successfully",
   });
 }
