@@ -305,6 +305,14 @@ export async function update(req, res) {
 
   await connection.query(sql, params);
 
+  if (req.file && oldProduct.image) {
+    try {
+      await fs.unlink(`public/${oldProduct.image}`);
+    } catch (err) {
+      console.warn("Old product image not found or already deleted");
+    }
+  }
+
   res.json({
     message: "Product updated successfully",
     data: {
