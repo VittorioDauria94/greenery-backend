@@ -1,6 +1,34 @@
 import connection from "../config/db.js";
 import slugify from "slugify";
 
+async function generateUniqueSlug(name) {
+  const baseSlug = slugify(name, {
+    lower: true,
+    strict: true,
+  });
+
+  let slug = baseSlug;
+  let counter = 2;
+
+  while (true) {
+    const [rows] = await connection.query(
+      `
+        SELECT id
+        FROM products
+        WHERE slug = ?
+      `,
+      [slug],
+    );
+
+    if (rows.length === 0) {
+      return slug;
+    }
+
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
 export async function index(req, res) {
   const { category, search, featured } = req.query;
 
@@ -128,10 +156,7 @@ export async function store(req, res) {
     });
   }
 
-  const slug = slugify(name, {
-    lower: true,
-    strict: true,
-  });
+  const slug = await generateUniqueSlug(name);
 
   const image = req.file ? `images/products/${req.file.filename}` : null;
 
