@@ -4,6 +4,8 @@ import cors from "cors";
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import partnerRoutes from "./routes/partnerRoutes.js";
+import notFound from "./middlewares/notFound.js";
+import errorsHandler from "./middlewares/errorsHandler.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +37,10 @@ app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 
 app.use("/api/partners", partnerRoutes);
+
+app.use(notFound);
+
+app.use(errorsHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
