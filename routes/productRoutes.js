@@ -4,6 +4,7 @@ import {
   show,
   store,
   update,
+  modify,
   destroy,
 } from "../controllers/productController.js";
 import uploadProductImage from "../middlewares/uploadProductImage.js";
@@ -17,6 +18,8 @@ router.get("/:slug", show);
 router.post("/", uploadProductImage.single("image"), store);
 
 router.put("/:id", uploadProductImage.single("image"), update);
+
+router.patch("/:id", uploadProductImage.single("image"), modify);
 
 router.delete("/:id", destroy);
 

@@ -316,6 +316,110 @@ export async function update(req, res) {
   });
 }
 
+export async function modify(req, res) {
+  const { id } = req.params;
+
+  const [products] = await connection.query(
+    `
+      SELECT *
+      FROM products
+      WHERE id = ?
+    `,
+    [id],
+  );
+
+  if (products.length === 0) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
+  }
+
+  const oldProduct = products[0];
+
+  const {
+    category_id,
+    partner_id,
+    name,
+    description,
+    material,
+    packaging,
+    certification,
+    eco_badge,
+    origin,
+    price,
+    stock,
+    is_featured,
+  } = req.body;
+
+  const newName = name ?? oldProduct.name;
+
+  const slug = name ? await generateUniqueSlug(newName, id) : oldProduct.slug;
+
+  const image = req.file
+    ? `images/products/${req.file.filename}`
+    : oldProduct.image;
+
+  const sql = `
+    UPDATE products
+    SET
+      category_id = ?,
+      partner_id = ?,
+      name = ?,
+      slug = ?,
+      description = ?,
+      material = ?,
+      packaging = ?,
+      certification = ?,
+      eco_badge = ?,
+      origin = ?,
+      price = ?,
+      image = ?,
+      stock = ?,
+      is_featured = ?
+    WHERE id = ?
+  `;
+
+  const params = [
+    category_id ?? oldProduct.category_id,
+    partner_id ?? oldProduct.partner_id,
+    newName,
+    slug,
+    description ?? oldProduct.description,
+    material ?? oldProduct.material,
+    packaging ?? oldProduct.packaging,
+    certification ?? oldProduct.certification,
+    eco_badge ?? oldProduct.eco_badge,
+    origin ?? oldProduct.origin,
+    price !== undefined ? Number(price) : oldProduct.price,
+    image,
+    stock !== undefined ? Number(stock) : oldProduct.stock,
+    is_featured !== undefined
+      ? is_featured === "true" || is_featured === true
+      : oldProduct.is_featured,
+    id,
+  ];
+
+  await connection.query(sql, params);
+
+  if (req.file && oldProduct.image) {
+    try {
+      await fs.unlink(`public/${oldProduct.image}`);
+    } catch (err) {
+      console.warn("Old product image not found or already deleted");
+    }
+  }
+
+  res.json({
+    message: "Product modified successfully",
+    data: {
+      id: Number(id),
+      name: newName,
+      slug,
+      image,
+    },
+  });
+}
+
 export async function destroy(req, res) {
   const { id } = req.params;
 
