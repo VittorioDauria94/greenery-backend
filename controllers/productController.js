@@ -1,7 +1,7 @@
 import connection from "../config/db.js";
 import slugify from "slugify";
 
-async function generateUniqueSlug(name) {
+async function generateUniqueSlug(name, ignoredProductId = null) {
   const baseSlug = slugify(name, {
     lower: true,
     strict: true,
@@ -11,14 +11,20 @@ async function generateUniqueSlug(name) {
   let counter = 2;
 
   while (true) {
-    const [rows] = await connection.query(
-      `
-        SELECT id
-        FROM products
-        WHERE slug = ?
-      `,
-      [slug],
-    );
+    let sql = `
+      SELECT id
+      FROM products
+      WHERE slug = ?
+    `;
+
+    const params = [slug];
+
+    if (ignoredProductId) {
+      sql += ` AND id != ?`;
+      params.push(ignoredProductId);
+    }
+
+    const [rows] = await connection.query(sql, params);
 
     if (rows.length === 0) {
       return slug;
@@ -204,6 +210,104 @@ export async function store(req, res) {
     message: "Product created successfully",
     data: {
       id: result.insertId,
+      name,
+      slug,
+      image,
+    },
+  });
+}
+
+export async function update(req, res) {
+  const { id } = req.params;
+
+  const {
+    category_id,
+    partner_id,
+    name,
+    description,
+    material,
+    packaging,
+    certification,
+    eco_badge,
+    origin,
+    price,
+    stock,
+    is_featured,
+  } = req.body;
+
+  if (!name || !description || !price) {
+    return res.status(400).json({
+      message: "Name, description and price are required",
+    });
+  }
+
+  const [products] = await connection.query(
+    `
+      SELECT id, image
+      FROM products
+      WHERE id = ?
+    `,
+    [id],
+  );
+
+  if (products.length === 0) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
+  }
+
+  const oldProduct = products[0];
+
+  const slug = await generateUniqueSlug(name, id);
+
+  const image = req.file
+    ? `images/products/${req.file.filename}`
+    : oldProduct.image;
+
+  const sql = `
+    UPDATE products
+    SET
+      category_id = ?,
+      partner_id = ?,
+      name = ?,
+      slug = ?,
+      description = ?,
+      material = ?,
+      packaging = ?,
+      certification = ?,
+      eco_badge = ?,
+      origin = ?,
+      price = ?,
+      image = ?,
+      stock = ?,
+      is_featured = ?
+    WHERE id = ?
+  `;
+
+  const params = [
+    category_id || null,
+    partner_id || null,
+    name,
+    slug,
+    description,
+    material || null,
+    packaging || null,
+    certification || null,
+    eco_badge || null,
+    origin || null,
+    Number(price),
+    image,
+    Number(stock) || 0,
+    is_featured === "true" || is_featured === true,
+    id,
+  ];
+
+  await connection.query(sql, params);
+
+  res.json({
+    message: "Product updated successfully",
+    data: {
+      id: Number(id),
       name,
       slug,
       image,
