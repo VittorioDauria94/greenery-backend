@@ -1,10 +1,10 @@
 # Greenery Backend
 
-Backend REST API per **Greenery**, un aggregatore sostenibile / e-commerce fittizio dedicato a prodotti eco-friendly selezionati da partner credibili.
+REST API backend for **Greenery**, a fictional sustainable product aggregator / e-commerce platform focused on eco-friendly products selected from credible partners.
 
-Il backend gestisce prodotti, categorie, partner sostenibili e ordini, con calcolo del totale lato server e aggiornamento dello stock prodotti.
+The backend manages products, categories, sustainable partners and orders. It also handles product image uploads, unique product slugs, server-side order total calculation and stock updates.
 
-## Tecnologie utilizzate
+## Technologies
 
 - Node.js
 - Express
@@ -14,13 +14,13 @@ Il backend gestisce prodotti, categorie, partner sostenibili e ordini, con calco
 - Multer
 - Slugify
 
-## Nome database
+## Database name
 
 ```txt
 greenery_db
 ```
 
-## Struttura progetto
+## Project structure
 
 ```txt
 greenery-backend/
@@ -39,41 +39,46 @@ greenery-backend/
 │   └── orderRoutes.js
 ├── middlewares/
 │   ├── notFound.js
-│   └── errorsHandler.js
+│   ├── errorsHandler.js
+│   └── uploadProductImage.js
 ├── database/
 │   └── schema.sql
 ├── public/
+│   └── images/
+│       └── products/
 ├── .env.example
+├── .gitignore
 ├── package.json
+├── package-lock.json
 └── README.md
 ```
 
-## Funzionalità
+## Features
 
-- Connessione a database MySQL
-- API prodotti complete
-- API categorie
-- API partner sostenibili
-- Creazione ordini
-- Upload immagini prodotti con Multer
-- Generazione slug prodotti con Slugify
-- Gestione slug univoci
-- Creazione prodotto
-- Modifica completa prodotto
-- Modifica parziale prodotto
-- Cancellazione prodotto
-- Validazione base dei dati ordine
-- Controllo prodotti esistenti
-- Controllo stock disponibile
-- Calcolo totale ordine lato backend
-- Creazione righe ordine in `order_items`
-- Aggiornamento stock prodotti
-- Transazioni MySQL per la creazione ordine
-- Middleware per rotte non trovate
-- Middleware per gestione errori
-- Gestione messaggi di errore diversa tra development e production
+- MySQL database connection
+- Products API
+- Categories API
+- Sustainable partners API
+- Orders API
+- Product image upload with Multer
+- Product slug generation with Slugify
+- Unique product slugs
+- Product creation
+- Full product update
+- Partial product update
+- Product deletion
+- Basic order data validation
+- Product existence check
+- Stock availability check
+- Server-side order total calculation
+- Order items creation
+- Product stock update after order creation
+- MySQL transactions for order creation
+- Not found middleware
+- Error handler middleware
+- Environment-based error responses
 
-## Tabelle principali
+## Main database tables
 
 ```txt
 categories
@@ -83,17 +88,17 @@ orders
 order_items
 ```
 
-## Setup progetto
+## Setup
 
-Installare le dipendenze:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Creare un file `.env` partendo da `.env.example`.
+Create a `.env` file based on `.env.example`.
 
-Esempio `.env`:
+Example `.env`:
 
 ```env
 NODE_ENV=development
@@ -109,47 +114,47 @@ DB_PORT=3306
 FRONTEND_URL=http://localhost:5173
 ```
 
-Avviare il server in development:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Avviare il server in produzione:
+Start the production server:
 
 ```bash
 npm start
 ```
 
-Il server sarà disponibile su:
+The server will run at:
 
 ```txt
 http://localhost:3000
 ```
 
-## Database
+## Database setup
 
-Per creare il database e le tabelle, eseguire il file:
+To create the database, tables and initial seed data, run:
 
 ```txt
 database/schema.sql
 ```
 
-Da MySQL Workbench:
+Using MySQL Workbench:
 
 ```txt
 File > Open SQL Script
 ```
 
-Poi selezionare `schema.sql` ed eseguire lo script completo.
+Then select `schema.sql` and execute the full script.
 
-Da terminale, se il comando `mysql` è disponibile:
+Using terminal, if the `mysql` command is available:
 
 ```bash
 mysql -u root -p < database/schema.sql
 ```
 
-## API disponibili
+## API endpoints
 
 ### Health check
 
@@ -157,7 +162,7 @@ mysql -u root -p < database/schema.sql
 GET /api/health
 ```
 
-Risposta esempio:
+Example response:
 
 ```json
 {
@@ -170,15 +175,15 @@ Risposta esempio:
 
 ## Products
 
-### Lista prodotti
+### Get all products
 
 ```txt
 GET /api/products
 ```
 
-Restituisce tutti i prodotti con categoria e partner associati.
+Returns all products with related category and partner data.
 
-Query supportate:
+Supported query params:
 
 ```txt
 ?category=igiene-personale
@@ -186,7 +191,7 @@ Query supportate:
 ?featured=true
 ```
 
-Esempi:
+Examples:
 
 ```txt
 GET /api/products
@@ -197,21 +202,21 @@ GET /api/products?featured=true
 
 ---
 
-### Dettaglio prodotto
+### Get product details
 
 ```txt
 GET /api/products/:slug
 ```
 
-Restituisce il dettaglio di un singolo prodotto.
+Returns a single product by slug.
 
-Esempio:
+Example:
 
 ```txt
 GET /api/products/spazzolino-in-bamboo
 ```
 
-Risposta errore se il prodotto non esiste:
+Error response if the product does not exist:
 
 ```json
 {
@@ -221,21 +226,21 @@ Risposta errore se il prodotto non esiste:
 
 ---
 
-### Creazione prodotto
+### Create product
 
 ```txt
 POST /api/products
 ```
 
-Crea un nuovo prodotto.
+Creates a new product.
 
-La richiesta deve essere inviata come:
+The request must be sent as:
 
 ```txt
 form-data
 ```
 
-Campi supportati:
+Supported fields:
 
 ```txt
 category_id
@@ -253,67 +258,67 @@ is_featured
 image
 ```
 
-Il campo `image` è opzionale e deve essere inviato come file.
+The `image` field is optional and must be sent as a file.
 
-Esempio campi:
+Example fields:
 
 ```txt
 category_id: 1
 partner_id: 1
-name: Rasoio in bamboo
-description: Rasoio sostenibile con manico in bamboo e lame sostituibili.
-material: Bamboo naturale e acciaio
-packaging: Cartoncino riciclato
+name: Bamboo razor
+description: Sustainable razor with bamboo handle and replaceable blades.
+material: Natural bamboo and steel
+packaging: Recycled cardboard
 certification: FSC
 eco_badge: Plastic free
-origin: Italia
+origin: Italy
 price: 12.90
 stock: 20
 is_featured: true
-image: file immagine
+image: image file
 ```
 
-Risposta esempio:
+Example response:
 
 ```json
 {
   "message": "Product created successfully",
   "data": {
     "id": 11,
-    "name": "Rasoio in bamboo",
-    "slug": "rasoio-in-bamboo",
-    "image": "images/products/nome-file.jpg"
+    "name": "Bamboo razor",
+    "slug": "bamboo-razor",
+    "image": "images/products/file-name.jpg"
   }
 }
 ```
 
-Lo slug viene generato automaticamente dal nome del prodotto.
+The slug is automatically generated from the product name.
 
-Se esiste già un prodotto con lo stesso slug, il backend genera uno slug univoco, ad esempio:
+If a product with the same slug already exists, the backend generates a unique slug:
 
 ```txt
-rasoio-in-bamboo
-rasoio-in-bamboo-2
-rasoio-in-bamboo-3
+bamboo-razor
+bamboo-razor-2
+bamboo-razor-3
 ```
 
 ---
 
-### Modifica completa prodotto
+### Full product update
 
 ```txt
 PUT /api/products/:id
 ```
 
-Aggiorna completamente un prodotto esistente.
+Fully updates an existing product.
 
-La richiesta deve essere inviata come:
+The request must be sent as:
 
 ```txt
 form-data
 ```
 
-Campi principali:
+Main fields:
 
 ```txt
 category_id
@@ -331,35 +336,39 @@ is_featured
 image
 ```
 
-Il campo `image` è opzionale.
+The `image` field is optional.
 
-Se viene inviata una nuova immagine, il backend aggiorna il prodotto e rimuove la vecchia immagine dalla cartella `public/images/products`.
+If a new image is uploaded, the backend updates the product and removes the old image from:
 
-Risposta esempio:
+```txt
+public/images/products
+```
+
+Example response:
 
 ```json
 {
   "message": "Product updated successfully",
   "data": {
     "id": 11,
-    "name": "Rasoio in bamboo premium",
-    "slug": "rasoio-in-bamboo-premium",
-    "image": "images/products/nome-file.jpg"
+    "name": "Premium bamboo razor",
+    "slug": "premium-bamboo-razor",
+    "image": "images/products/file-name.jpg"
   }
 }
 ```
 
 ---
 
-### Modifica parziale prodotto
+### Partial product update
 
 ```txt
 PATCH /api/products/:id
 ```
 
-Modifica solo i campi inviati.
+Updates only the provided fields.
 
-Esempio:
+Example:
 
 ```txt
 PATCH /api/products/11
@@ -372,41 +381,41 @@ price: 15.90
 stock: 30
 ```
 
-In questo caso vengono modificati solo `price` e `stock`, mentre gli altri campi restano invariati.
+In this case, only `price` and `stock` are updated. All other fields remain unchanged.
 
-Anche qui il campo `image` è opzionale. Se viene inviata una nuova immagine, la vecchia viene rimossa.
+The `image` field is also optional. If a new image is uploaded, the old image is removed.
 
-Risposta esempio:
+Example response:
 
 ```json
 {
   "message": "Product modified successfully",
   "data": {
     "id": 11,
-    "name": "Rasoio in bamboo premium",
-    "slug": "rasoio-in-bamboo-premium",
-    "image": "images/products/nome-file.jpg"
+    "name": "Premium bamboo razor",
+    "slug": "premium-bamboo-razor",
+    "image": "images/products/file-name.jpg"
   }
 }
 ```
 
 ---
 
-### Cancellazione prodotto
+### Delete product
 
 ```txt
 DELETE /api/products/:id
 ```
 
-Elimina un prodotto dal database.
+Deletes a product from the database.
 
-Esempio:
+Example:
 
 ```txt
 DELETE /api/products/11
 ```
 
-Risposta esempio:
+Example response:
 
 ```json
 {
@@ -414,13 +423,13 @@ Risposta esempio:
 }
 ```
 
-Se il prodotto ha un’immagine salvata, il backend prova a rimuoverla anche dalla cartella:
+If the product has an image, the backend also tries to remove it from:
 
 ```txt
 public/images/products
 ```
 
-Risposta errore se il prodotto non esiste:
+Error response if the product does not exist:
 
 ```json
 {
@@ -432,29 +441,29 @@ Risposta errore se il prodotto non esiste:
 
 ## Categories
 
-### Lista categorie
+### Get all categories
 
 ```txt
 GET /api/categories
 ```
 
-Restituisce tutte le categorie con il numero di prodotti associati.
+Returns all categories with the number of related products.
 
 ---
 
-### Prodotti per categoria
+### Get products by category
 
 ```txt
 GET /api/categories/:slug/products
 ```
 
-Esempio:
+Example:
 
 ```txt
 GET /api/categories/igiene-personale/products
 ```
 
-Risposta errore se la categoria non esiste:
+Error response if the category does not exist:
 
 ```json
 {
@@ -466,31 +475,31 @@ Risposta errore se la categoria non esiste:
 
 ## Partners
 
-### Lista partner
+### Get all partners
 
 ```txt
 GET /api/partners
 ```
 
-Restituisce tutti i partner sostenibili con il numero di prodotti associati.
+Returns all sustainable partners with the number of related products.
 
 ---
 
-### Dettaglio partner
+### Get partner details
 
 ```txt
 GET /api/partners/:slug
 ```
 
-Esempio:
+Example:
 
 ```txt
 GET /api/partners/bamboolife
 ```
 
-Restituisce i dati del partner e i prodotti collegati.
+Returns the partner details and related products.
 
-Risposta errore se il partner non esiste:
+Error response if the partner does not exist:
 
 ```json
 {
@@ -502,15 +511,15 @@ Risposta errore se il partner non esiste:
 
 ## Orders
 
-### Creazione ordine
+### Create order
 
 ```txt
 POST /api/orders
 ```
 
-Crea un nuovo ordine.
+Creates a new order.
 
-Esempio body:
+Example body:
 
 ```json
 {
@@ -532,7 +541,7 @@ Esempio body:
 }
 ```
 
-Risposta esempio:
+Example response:
 
 ```json
 {
@@ -544,21 +553,21 @@ Risposta esempio:
 }
 ```
 
-Il totale viene calcolato lato backend usando i prezzi presenti nel database.
+The total price is calculated on the backend using the product prices stored in the database.
 
-Il backend controlla anche:
+The backend also checks that:
 
-- che i dati obbligatori siano presenti
-- che i prodotti esistano
-- che la quantità richiesta sia valida
-- che lo stock sia sufficiente
-- che lo stock venga aggiornato dopo l’ordine
+- required customer data is present
+- products exist
+- requested quantities are valid
+- enough stock is available
+- product stock is updated after order creation
 
-## Gestione errori
+## Error handling
 
-In development vengono mostrati dettagli utili per il debug.
+In development mode, detailed error information is returned to help debugging.
 
-In production gli errori interni restituiscono un messaggio generico:
+In production mode, internal errors return a generic message:
 
 ```json
 {
@@ -566,47 +575,47 @@ In production gli errori interni restituiscono un messaggio generico:
 }
 ```
 
-Questo evita di esporre dettagli tecnici sensibili.
+This prevents exposing sensitive technical details.
 
-## Script disponibili
+## Available scripts
 
 ```bash
 npm run dev
 ```
 
-Avvia il server in modalità development con `--watch`.
+Starts the server in development mode with `--watch`.
 
 ```bash
 npm start
 ```
 
-Avvia il server normalmente.
+Starts the server normally.
 
-## Stato progetto
+## Project status
 
-### Completato
+### Completed
 
-- Setup Express
-- Connessione MySQL
+- Express setup
+- MySQL connection
 - Database schema
-- Seed iniziale prodotti, categorie e partner
-- API prodotti
-- API categorie
-- API partner
-- API creazione ordine
-- CRUD prodotti
-- Upload immagini prodotti
-- Generazione slug prodotti
-- Slug univoci
-- Middleware not found
-- Middleware error handler
-- Gestione errori basata su ambiente
+- Initial seed data for products, categories and partners
+- Products API
+- Categories API
+- Partners API
+- Order creation API
+- Product CRUD
+- Product image upload
+- Product slug generation
+- Unique product slugs
+- Not found middleware
+- Error handler middleware
+- Environment-based error handling
 
-### Da fare
+### To do
 
-- Validazioni più avanzate
-- Autenticazione admin
-- Protezione rotte admin
-- Eventuale gestione categorie da admin
-- Eventuale gestione partner da admin
-- Deploy backend
+- Advanced validation
+- Admin authentication
+- Protected admin routes
+- Category management
+- Partner management
+- Backend deployment
