@@ -51,10 +51,17 @@ greenery-backend/
 ## Funzionalità
 
 - Connessione a database MySQL
-- API prodotti
+- API prodotti complete
 - API categorie
 - API partner sostenibili
 - Creazione ordini
+- Upload immagini prodotti con Multer
+- Generazione slug prodotti con Slugify
+- Gestione slug univoci
+- Creazione prodotto
+- Modifica completa prodotto
+- Modifica parziale prodotto
+- Cancellazione prodotto
 - Validazione base dei dati ordine
 - Controllo prodotti esistenti
 - Controllo stock disponibile
@@ -196,10 +203,221 @@ GET /api/products?featured=true
 GET /api/products/:slug
 ```
 
+Restituisce il dettaglio di un singolo prodotto.
+
 Esempio:
 
 ```txt
 GET /api/products/spazzolino-in-bamboo
+```
+
+Risposta errore se il prodotto non esiste:
+
+```json
+{
+  "message": "Product not found"
+}
+```
+
+---
+
+### Creazione prodotto
+
+```txt
+POST /api/products
+```
+
+Crea un nuovo prodotto.
+
+La richiesta deve essere inviata come:
+
+```txt
+form-data
+```
+
+Campi supportati:
+
+```txt
+category_id
+partner_id
+name
+description
+material
+packaging
+certification
+eco_badge
+origin
+price
+stock
+is_featured
+image
+```
+
+Il campo `image` è opzionale e deve essere inviato come file.
+
+Esempio campi:
+
+```txt
+category_id: 1
+partner_id: 1
+name: Rasoio in bamboo
+description: Rasoio sostenibile con manico in bamboo e lame sostituibili.
+material: Bamboo naturale e acciaio
+packaging: Cartoncino riciclato
+certification: FSC
+eco_badge: Plastic free
+origin: Italia
+price: 12.90
+stock: 20
+is_featured: true
+image: file immagine
+```
+
+Risposta esempio:
+
+```json
+{
+  "message": "Product created successfully",
+  "data": {
+    "id": 11,
+    "name": "Rasoio in bamboo",
+    "slug": "rasoio-in-bamboo",
+    "image": "images/products/nome-file.jpg"
+  }
+}
+```
+
+Lo slug viene generato automaticamente dal nome del prodotto.
+
+Se esiste già un prodotto con lo stesso slug, il backend genera uno slug univoco, ad esempio:
+
+```txt
+rasoio-in-bamboo
+rasoio-in-bamboo-2
+rasoio-in-bamboo-3
+```
+
+---
+
+### Modifica completa prodotto
+
+```txt
+PUT /api/products/:id
+```
+
+Aggiorna completamente un prodotto esistente.
+
+La richiesta deve essere inviata come:
+
+```txt
+form-data
+```
+
+Campi principali:
+
+```txt
+category_id
+partner_id
+name
+description
+material
+packaging
+certification
+eco_badge
+origin
+price
+stock
+is_featured
+image
+```
+
+Il campo `image` è opzionale.
+
+Se viene inviata una nuova immagine, il backend aggiorna il prodotto e rimuove la vecchia immagine dalla cartella `public/images/products`.
+
+Risposta esempio:
+
+```json
+{
+  "message": "Product updated successfully",
+  "data": {
+    "id": 11,
+    "name": "Rasoio in bamboo premium",
+    "slug": "rasoio-in-bamboo-premium",
+    "image": "images/products/nome-file.jpg"
+  }
+}
+```
+
+---
+
+### Modifica parziale prodotto
+
+```txt
+PATCH /api/products/:id
+```
+
+Modifica solo i campi inviati.
+
+Esempio:
+
+```txt
+PATCH /api/products/11
+```
+
+Body `form-data`:
+
+```txt
+price: 15.90
+stock: 30
+```
+
+In questo caso vengono modificati solo `price` e `stock`, mentre gli altri campi restano invariati.
+
+Anche qui il campo `image` è opzionale. Se viene inviata una nuova immagine, la vecchia viene rimossa.
+
+Risposta esempio:
+
+```json
+{
+  "message": "Product modified successfully",
+  "data": {
+    "id": 11,
+    "name": "Rasoio in bamboo premium",
+    "slug": "rasoio-in-bamboo-premium",
+    "image": "images/products/nome-file.jpg"
+  }
+}
+```
+
+---
+
+### Cancellazione prodotto
+
+```txt
+DELETE /api/products/:id
+```
+
+Elimina un prodotto dal database.
+
+Esempio:
+
+```txt
+DELETE /api/products/11
+```
+
+Risposta esempio:
+
+```json
+{
+  "message": "Product deleted successfully"
+}
+```
+
+Se il prodotto ha un’immagine salvata, il backend prova a rimuoverla anche dalla cartella:
+
+```txt
+public/images/products
 ```
 
 Risposta errore se il prodotto non esiste:
@@ -376,14 +594,19 @@ Avvia il server normalmente.
 - API categorie
 - API partner
 - API creazione ordine
+- CRUD prodotti
+- Upload immagini prodotti
+- Generazione slug prodotti
+- Slug univoci
 - Middleware not found
 - Middleware error handler
 - Gestione errori basata su ambiente
 
 ### Da fare
 
-- Upload immagini prodotti con Multer
-- Eventuale area admin
 - Validazioni più avanzate
 - Autenticazione admin
+- Protezione rotte admin
+- Eventuale gestione categorie da admin
+- Eventuale gestione partner da admin
 - Deploy backend
