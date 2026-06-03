@@ -6,6 +6,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import partnerRoutes from "./routes/partnerRoutes.js";
 import notFound from "./middlewares/notFound.js";
 import errorsHandler from "./middlewares/errorsHandler.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,8 @@ app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 
 app.use("/api/partners", partnerRoutes);
+
+app.use("/api/orders", orderRoutes);
 
 app.use(notFound);
 
