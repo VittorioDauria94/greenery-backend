@@ -1,8 +1,8 @@
 # Greenery Backend
 
-REST API backend for **Greenery**, a fictional sustainable product aggregator / e-commerce platform focused on eco-friendly products selected from credible partners.
+REST API backend for **Greenery**, a product aggregator / e-commerce platform focused on eco-friendly products selected from credible sustainable partners.
 
-The backend manages products, categories, sustainable partners and orders. It also handles product image uploads, unique product slugs, server-side order total calculation and stock updates.
+Greenery is designed as a sustainable product aggregator with e-commerce features. The backend manages products, categories, partners and orders. It also handles product image uploads, unique product slugs, server-side order total calculation and stock updates.
 
 ## Technologies
 
@@ -77,6 +77,7 @@ greenery-backend/
 - Not found middleware
 - Error handler middleware
 - Environment-based error responses
+- Seed data aligned with the Greenery frontend categories
 
 ## Main database tables
 
@@ -87,6 +88,34 @@ products
 orders
 order_items
 ```
+
+## Seed categories
+
+The initial database seed includes the following categories:
+
+```txt
+Abbigliamento       -> abbigliamento
+Igiene              -> igiene-personale
+Cosmesi             -> cosmetici-naturali
+Animali             -> animali
+Casa                -> casa-sostenibile
+```
+
+These categories are aligned with the Greenery frontend navigation.
+
+## Seed partners
+
+The initial database seed includes sustainable partners such as:
+
+```txt
+OrganicWear
+BambooLife
+PureNest
+EcoPaw
+GreenHome
+```
+
+Each partner contains basic information, verification status and a sustainability note.
 
 ## Setup
 
@@ -154,6 +183,26 @@ Using terminal, if the `mysql` command is available:
 mysql -u root -p < database/schema.sql
 ```
 
+## Static product images
+
+Uploaded product images are stored in:
+
+```txt
+public/images/products
+```
+
+They are served publicly from:
+
+```txt
+/images/products/file-name.jpg
+```
+
+Example:
+
+```txt
+http://localhost:3000/images/products/file-name.jpg
+```
+
 ## API endpoints
 
 ### Health check
@@ -186,7 +235,11 @@ Returns all products with related category and partner data.
 Supported query params:
 
 ```txt
+?category=abbigliamento
 ?category=igiene-personale
+?category=cosmetici-naturali
+?category=animali
+?category=casa-sostenibile
 ?search=bamboo
 ?featured=true
 ```
@@ -195,7 +248,11 @@ Examples:
 
 ```txt
 GET /api/products
+GET /api/products?category=abbigliamento
 GET /api/products?category=igiene-personale
+GET /api/products?category=cosmetici-naturali
+GET /api/products?category=animali
+GET /api/products?category=casa-sostenibile
 GET /api/products?search=bamboo
 GET /api/products?featured=true
 ```
@@ -210,10 +267,12 @@ GET /api/products/:slug
 
 Returns a single product by slug.
 
-Example:
+Examples:
 
 ```txt
+GET /api/products/t-shirt-cotone-biologico
 GET /api/products/spazzolino-in-bamboo
+GET /api/products/ciotola-bamboo-animali
 ```
 
 Error response if the product does not exist:
@@ -263,8 +322,8 @@ The `image` field is optional and must be sent as a file.
 Example fields:
 
 ```txt
-category_id: 1
-partner_id: 1
+category_id: 2
+partner_id: 2
 name: Bamboo razor
 description: Sustainable razor with bamboo handle and replaceable blades.
 material: Natural bamboo and steel
@@ -457,10 +516,14 @@ Returns all categories with the number of related products.
 GET /api/categories/:slug/products
 ```
 
-Example:
+Examples:
 
 ```txt
+GET /api/categories/abbigliamento/products
 GET /api/categories/igiene-personale/products
+GET /api/categories/cosmetici-naturali/products
+GET /api/categories/animali/products
+GET /api/categories/casa-sostenibile/products
 ```
 
 Error response if the category does not exist:
@@ -491,10 +554,14 @@ Returns all sustainable partners with the number of related products.
 GET /api/partners/:slug
 ```
 
-Example:
+Examples:
 
 ```txt
+GET /api/partners/organicwear
 GET /api/partners/bamboolife
+GET /api/partners/purenest
+GET /api/partners/ecopaw
+GET /api/partners/greenhome
 ```
 
 Returns the partner details and related products.
@@ -599,6 +666,7 @@ Starts the server normally.
 - MySQL connection
 - Database schema
 - Initial seed data for products, categories and partners
+- Seed data aligned with Greenery frontend categories
 - Products API
 - Categories API
 - Partners API

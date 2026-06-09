@@ -1,7 +1,7 @@
 {
   "name": "greenery-backend",
   "version": "1.0.0",
-  "description": "Aggregatore sostenibile di prodotti eco-friendly",
+  "description": "Aggregatore sostenibile / e-commerce per prodotti eco-friendly.",
   "license": "ISC",
   "private": true,
   "author": "Vittorio D'Auria",
