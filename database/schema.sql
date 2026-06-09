@@ -90,43 +90,45 @@ CREATE TABLE order_items (
 );
 
 INSERT INTO categories (name, slug, description) VALUES
-('Igiene personale', 'igiene-personale', 'Prodotti sostenibili per la cura quotidiana della persona.'),
-('Casa sostenibile', 'casa-sostenibile', 'Soluzioni eco-friendly per la pulizia e la gestione della casa.'),
-('Cucina plastic free', 'cucina-plastic-free', 'Prodotti riutilizzabili e alternativi alla plastica monouso.'),
-('Accessori riutilizzabili', 'accessori-riutilizzabili', 'Accessori pensati per ridurre gli sprechi nella vita quotidiana.'),
-('Cosmetici naturali', 'cosmetici-naturali', 'Cosmetici con ingredienti naturali e packaging sostenibile.');
+('Abbigliamento', 'abbigliamento', 'Capi e accessori realizzati con materiali sostenibili, riciclati o biologici.'),
+('Igiene', 'igiene-personale', 'Prodotti sostenibili per la cura quotidiana della persona.'),
+('Cosmesi', 'cosmetici-naturali', 'Cosmetici naturali con ingredienti selezionati e packaging sostenibile.'),
+('Animali', 'animali', 'Prodotti eco-friendly pensati per la cura degli animali domestici.'),
+('Casa', 'casa-sostenibile', 'Soluzioni sostenibili per la pulizia e la gestione della casa.');
 
 INSERT INTO partners 
 (name, slug, description, website, logo, is_verified, sustainability_note)
 VALUES
-('BambooLife', 'bamboolife', 'Partner specializzato in prodotti per l’igiene personale realizzati in bamboo.', 'https://example.com/bamboolife', 'bamboolife-logo.png', TRUE, 'Utilizza materiali biodegradabili e packaging plastic free.'),
+('OrganicWear', 'organicwear', 'Partner specializzato in abbigliamento sostenibile e materiali biologici.', 'https://example.com/organicwear', 'organicwear-logo.png', TRUE, 'Utilizza cotone biologico certificato e materiali riciclati.'),
 
-('PureNest', 'purenest', 'Brand dedicato a prodotti naturali per la cura della persona e della casa.', 'https://example.com/purenest', 'purenest-logo.png', TRUE, 'Predilige ingredienti naturali e filiere a basso impatto.'),
+('BambooLife', 'bamboolife', 'Partner specializzato in prodotti per l’igiene personale realizzati in bamboo e materiali plastic free.', 'https://example.com/bamboolife', 'bamboolife-logo.png', TRUE, 'Promuove alternative biodegradabili ai prodotti monouso in plastica.'),
 
-('ReUse Lab', 'reuse-lab', 'Partner focalizzato su accessori riutilizzabili per cucina, spesa e tempo libero.', 'https://example.com/reuse-lab', 'reuse-lab-logo.png', TRUE, 'Promuove prodotti durevoli e alternative alla plastica monouso.'),
+('PureNest', 'purenest', 'Brand dedicato a cosmetici naturali e prodotti per la cura della persona.', 'https://example.com/purenest', 'purenest-logo.png', TRUE, 'Predilige ingredienti naturali e packaging a basso impatto ambientale.'),
 
-('GreenHome', 'greenhome', 'Brand dedicato alla casa sostenibile e ai prodotti per la pulizia eco-friendly.', 'https://example.com/greenhome', 'greenhome-logo.png', FALSE, 'Partner in fase di verifica, con prodotti orientati alla riduzione degli sprechi.');
+('EcoPaw', 'ecopaw', 'Partner dedicato a prodotti sostenibili per animali domestici.', 'https://example.com/ecopaw', 'ecopaw-logo.png', TRUE, 'Propone accessori e prodotti biodegradabili per la cura degli animali.'),
+
+('GreenHome', 'greenhome', 'Brand dedicato alla casa sostenibile e ai prodotti per la pulizia eco-friendly.', 'https://example.com/greenhome', 'greenhome-logo.png', TRUE, 'Sviluppa prodotti per ridurre sprechi, plastica e impatto ambientale domestico.');
 
 INSERT INTO products 
 (category_id, partner_id, name, slug, description, material, packaging, certification, eco_badge, origin, price, image, stock, is_featured)
 VALUES
-(1, 1, 'Spazzolino in bamboo', 'spazzolino-in-bamboo', 'Spazzolino ecologico con manico in bamboo biodegradabile e setole delicate, pensato per ridurre l’uso quotidiano di plastica.', 'Bamboo naturale', 'Confezione in cartoncino riciclato', 'FSC', 'Plastic free', 'Italia', 3.99, 'spazzolino-bamboo.jpg', 50, TRUE),
+(1, 1, 'T-shirt in cotone biologico', 't-shirt-cotone-biologico', 'T-shirt realizzata in cotone biologico, morbida e pensata per ridurre l’impatto ambientale dell’abbigliamento quotidiano.', 'Cotone biologico', 'Packaging in carta riciclata', 'GOTS', 'Cotone bio', 'Italia', 24.90, 'tshirt-cotone-biologico.jpg', 35, TRUE),
 
-(1, 1, 'Cotton fioc biodegradabili', 'cotton-fioc-biodegradabili', 'Cotton fioc realizzati con materiali compostabili, ideali per sostituire le alternative in plastica monouso.', 'Carta e cotone', 'Scatola in carta riciclata', NULL, 'Biodegradabile', 'Italia', 2.49, 'cotton-fioc-biodegradabili.jpg', 80, FALSE),
+(1, 1, 'Shopper in cotone riciclato', 'shopper-cotone-riciclato', 'Borsa shopper resistente e riutilizzabile, realizzata in cotone riciclato per sostituire le borse monouso.', 'Cotone riciclato', 'Fascetta in carta riciclata', NULL, 'Riutilizzabile', 'Italia', 9.90, 'shopper-cotone-riciclato.jpg', 50, TRUE),
 
-(5, 2, 'Sapone solido naturale', 'sapone-solido-naturale', 'Sapone naturale senza plastica, delicato sulla pelle e adatto all’uso quotidiano.', 'Ingredienti naturali', 'Fascia in carta riciclata', NULL, 'Zero waste', 'Italia', 4.90, 'sapone-solido-naturale.jpg', 40, TRUE),
+(2, 2, 'Spazzolino in bamboo', 'spazzolino-in-bamboo', 'Spazzolino ecologico con manico in bamboo biodegradabile e setole delicate, pensato per ridurre l’uso quotidiano di plastica.', 'Bamboo naturale', 'Confezione in cartoncino riciclato', 'FSC', 'Plastic free', 'Italia', 3.99, 'spazzolino-bamboo.jpg', 70, TRUE),
 
-(5, 2, 'Shampoo solido', 'shampoo-solido', 'Shampoo solido eco-friendly, senza flacone in plastica e con ingredienti naturali.', 'Ingredienti naturali', 'Carta riciclata', NULL, 'Plastic free', 'Italia', 6.90, 'shampoo-solido.jpg', 35, TRUE),
+(2, 2, 'Cotton fioc biodegradabili', 'cotton-fioc-biodegradabili', 'Cotton fioc realizzati con materiali compostabili, ideali per sostituire le alternative in plastica monouso.', 'Carta e cotone', 'Scatola in carta riciclata', NULL, 'Biodegradabile', 'Italia', 2.49, 'cotton-fioc-biodegradabili.jpg', 90, FALSE),
 
-(4, 3, 'Borraccia in acciaio', 'borraccia-in-acciaio', 'Borraccia riutilizzabile in acciaio inox, perfetta per ridurre l’uso di bottiglie in plastica.', 'Acciaio inox', 'Cartoncino riciclato', NULL, 'Riutilizzabile', 'Europa', 14.90, 'borraccia-acciaio.jpg', 25, TRUE),
+(3, 3, 'Shampoo solido naturale', 'shampoo-solido-naturale', 'Shampoo solido eco-friendly, senza flacone in plastica e con ingredienti naturali.', 'Ingredienti naturali', 'Carta riciclata', NULL, 'Plastic free', 'Italia', 6.90, 'shampoo-solido.jpg', 45, TRUE),
 
-(3, 3, 'Pellicola alimentare in cera d’api', 'pellicola-alimentare-cera-api', 'Alternativa riutilizzabile alla pellicola trasparente, realizzata con cera d’api naturale.', 'Cotone e cera d’api', 'Carta riciclata', NULL, 'Riutilizzabile', 'Italia', 8.50, 'pellicola-cera-api.jpg', 30, FALSE),
+(3, 3, 'Sapone solido delicato', 'sapone-solido-delicato', 'Sapone naturale senza plastica, delicato sulla pelle e adatto all’uso quotidiano.', 'Ingredienti naturali', 'Fascia in carta riciclata', NULL, 'Zero waste', 'Italia', 4.90, 'sapone-solido-delicato.jpg', 55, TRUE),
 
-(3, 3, 'Sacchetti in cotone riutilizzabili', 'sacchetti-cotone-riutilizzabili', 'Set di sacchetti in cotone lavabili, ideali per spesa, frutta e verdura.', 'Cotone naturale', 'Fascetta in carta', NULL, 'Riutilizzabile', 'Italia', 7.90, 'sacchetti-cotone.jpg', 45, TRUE),
+(4, 4, 'Ciotola in bamboo per animali', 'ciotola-bamboo-animali', 'Ciotola resistente per animali domestici realizzata con fibre di bamboo, leggera e facile da pulire.', 'Fibre di bamboo', 'Cartoncino riciclato', NULL, 'Plastic free', 'Europa', 12.90, 'ciotola-bamboo-animali.jpg', 30, TRUE),
 
-(2, 4, 'Spugna naturale', 'spugna-naturale', 'Spugna naturale biodegradabile per la pulizia della casa e della cucina.', 'Fibra naturale', 'Carta riciclata', NULL, 'Biodegradabile', 'Europa', 5.50, 'spugna-naturale.jpg', 60, FALSE),
+(4, 4, 'Sacchetti biodegradabili per animali', 'sacchetti-biodegradabili-animali', 'Rotoli di sacchetti biodegradabili pensati per la gestione quotidiana degli animali domestici.', 'Materiale biodegradabile', 'Confezione in carta riciclata', NULL, 'Biodegradabile', 'Italia', 5.90, 'sacchetti-biodegradabili-animali.jpg', 80, FALSE),
 
-(2, 4, 'Detersivo eco-friendly', 'detersivo-eco-friendly', 'Detersivo ecologico con formula delicata e ingredienti a basso impatto ambientale.', 'Formula ecologica', 'Flacone riciclato', NULL, 'Packaging riciclato', 'Italia', 9.90, 'detersivo-eco.jpg', 20, FALSE),
+(5, 5, 'Detersivo eco-friendly', 'detersivo-eco-friendly', 'Detersivo ecologico con formula delicata e ingredienti a basso impatto ambientale.', 'Formula ecologica', 'Flacone riciclato', NULL, 'Packaging riciclato', 'Italia', 9.90, 'detersivo-eco.jpg', 25, FALSE),
 
-(1, 1, 'Pettine in legno', 'pettine-in-legno', 'Pettine resistente in legno naturale, alternativa sostenibile ai pettini in plastica.', 'Legno naturale', 'Cartoncino riciclato', 'FSC', 'Plastic free', 'Italia', 4.50, 'pettine-legno.jpg', 55, FALSE);
+(5, 5, 'Spugna naturale compostabile', 'spugna-naturale-compostabile', 'Spugna naturale biodegradabile per la pulizia della casa e della cucina.', 'Fibra naturale', 'Carta riciclata', NULL, 'Biodegradabile', 'Europa', 5.50, 'spugna-naturale-compostabile.jpg', 60, TRUE);
 
